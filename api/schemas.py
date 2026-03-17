@@ -50,7 +50,6 @@ class SessionSummary(BaseModel):
 
 # Sessions
 class SessionBase(BaseModel):
-...
     bank_account_info: Optional[str] = None
 
 class SessionCreate(SessionBase):
