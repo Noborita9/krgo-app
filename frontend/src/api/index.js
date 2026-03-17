@@ -1,14 +1,14 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: window.location.origin + '/api',
   headers: {
     'Content-Type': 'application/json',
   },
 })
 
 export const sessionApi = {
-  createSession: (bankInfo) => api.post('/sessions/', { bank_account_info: bankInfo }),
+  createSession: (bankInfo) => api.post('/sessions', { bank_account_info: bankInfo }),
   getSession: (id) => api.get(`/sessions/${id}`),
   uploadReceipt: (id, file) => {
     const formData = new FormData()
