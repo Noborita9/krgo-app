@@ -27,16 +27,22 @@ async def parse_receipt_image(file: UploadFile) -> list[dict[str, float]]:
         client = genai.Client(api_key=settings.gemini_api_key)
         
         prompt = (
-            "You are a receipt parsing assistant. Look at the attached image of a receipt. "
-            "Extract all the individual items and their prices. "
-            "Return the result as a JSON array of objects where the key is the item name and the value is the price as a float. "
-            "Ignore taxes, tips, and totals. Only return the individual line items."
+            "You are a professional receipt OCR and parsing expert. "
+            "Analyze the provided receipt image and extract every individual line item. "
+            "For each item, provide its name and the unit price. "
+            "If there are multiple quantities of the same item (e.g., '3x Burger'), "
+            "list them as separate items in the JSON array so each one can be claimed individually. "
+            "Crucial Instructions: "
+            "1. Only return a JSON array of objects. "
+            "2. Each object must have exactly one key (the item name) and its value (the price as a float). "
+            "3. Do not include currency symbols, taxes, service charges, or totals. "
+            "4. If you see '3 Burgers $30', return three entries: {'Burger': 10.0}, {'Burger': 10.0}, {'Burger': 10.0}. "
+            "5. Be extremely precise with names and decimal prices."
         )
 
-        # Upload the image bytes (GenAI requires specific types for inline data, 
-        # using the parts dictionary format for the `generate_content` call is common)
+        # Use gemini-1.5-flash which is much more stable for this task
         response = client.models.generate_content(
-            model='gemini-2.5-flash',
+            model='gemini-1.5-flash',
             contents=[
                 {"mime_type": file.content_type, "data": image_bytes},
                 prompt
