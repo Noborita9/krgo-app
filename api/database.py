@@ -5,11 +5,15 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from sqlalchemy.orm import declarative_base
 
 class Settings(BaseSettings):
-    # Set a default PostgreSQL connection string (can be overridden via environment variables or .env file)
     database_url: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/receipt_splitter"
     gemini_api_key: str = ""
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+    model_config = SettingsConfigDict(
+        env_file=".env", 
+        env_file_encoding="utf-8",
+        env_prefix="KRGO_APP_",
+        extra="ignore"
+    )
 
 settings = Settings()
 
