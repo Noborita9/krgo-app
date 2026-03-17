@@ -15,8 +15,15 @@ async def parse_receipt_image(file: UploadFile) -> list[dict[str, float]]:
     Uses Google GenAI if the API key is configured.
     Falls back to dummy data if not configured or if parsing fails.
     """
-    if not settings.gemini_api_key:
-        print("Warning: GEMINI_API_KEY not set. Using dummy data for receipt parsing.")
+    api_key = settings.gemini_api_key
+    
+    if not api_key:
+        # Fallback to checking os.environ directly in case prefixing failed
+        import os
+        api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("KRGO_APP_GEMINI_API_KEY")
+
+    if not api_key:
+        print("CRITICAL: No Gemini API Key found in settings or environment!")
         return [{"Burger": 12.50}, {"Fries": 4.00}, {"Soda": 2.50}]
 
     try:
@@ -24,7 +31,7 @@ async def parse_receipt_image(file: UploadFile) -> list[dict[str, float]]:
         image_bytes = await file.read()
         await file.seek(0) # Reset pointer
         
-        client = genai.Client(api_key=settings.gemini_api_key)
+        client = genai.Client(api_key=api_key)
         
         prompt = (
             "You are a professional receipt OCR and parsing expert. "
