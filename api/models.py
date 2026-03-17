@@ -34,7 +34,7 @@ class Claim(Base):
     item_id = Column(String, ForeignKey("receipt_items.id"), nullable=False)
     user_name = Column(String, nullable=False)
     amount_claimed = Column(Float, nullable=False)  # Could be fraction or fixed value.
-    payment_file_path = Column(String, nullable=True) # Path to the uploaded confirmation file
+    payment_file_url = Column(String, nullable=True) # URL to the uploaded confirmation file
 
     # Relationships
     item = relationship("ReceiptItem", back_populates="claims")

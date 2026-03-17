@@ -151,7 +151,7 @@ async def upload_payment_confirmation(
         # put() returns an object with a 'url' attribute
         blob = vercel_blob.put(blob_name, content)
         # We'll use the column 'payment_file_path' to store the URL
-        claim.payment_file_path = blob.url
+        claim.payment_file_url = blob.url
     except Exception as e:
         print(f"Vercel Blob upload failed: {e}")
         raise HTTPException(status_code=500, detail="Failed to upload file to storage")
@@ -192,7 +192,7 @@ async def get_session_summary(session_id: str, db: AsyncSession = Depends(get_db
                 "item_id": item.id,
                 "item_name": item.name,
                 "cost": cost,
-                "payment_file_url": claim.payment_file_path
+                "payment_file_url": claim.payment_file_url
             })
             user_data[user_name]["total"] += cost
             grand_total += cost
