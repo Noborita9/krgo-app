@@ -38,9 +38,19 @@ app.add_middleware(
 # Include routers
 app.include_router(sessions.router)
 
+import sqlalchemy
+import asyncpg
+...
 @app.get("/api/health")
 def health_check():
-    return {"status": "ok", "message": "Receipt Splitter API is running!"}
+    return {
+        "status": "ok", 
+        "message": "Receipt Splitter API is running!",
+        "versions": {
+            "sqlalchemy": sqlalchemy.__version__,
+            "asyncpg": asyncpg.__version__
+        }
+    }
 
 if __name__ == "__main__":
     import uvicorn
