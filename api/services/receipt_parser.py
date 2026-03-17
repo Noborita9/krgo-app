@@ -47,14 +47,18 @@ async def parse_receipt_image(file: UploadFile) -> list[dict[str, float]]:
             "5. Be extremely precise with names and decimal prices."
         )
 
-        # Use gemini-1.5-flash which is much more stable for this task
+        # Using the correct structure for the new google-genai SDK
+        from google.genai import types
+        
+        image_part = types.Part.from_bytes(
+            data=image_bytes,
+            mime_type=file.content_type
+        )
+
         response = client.models.generate_content(
-            model='gemini-1.5-flash',
-            contents=[
-                {"mime_type": file.content_type, "data": image_bytes},
-                prompt
-            ],
-            config=genai.types.GenerateContentConfig(
+            model='gemini-2.0-flash',
+            contents=[image_part, prompt],
+            config=types.GenerateContentConfig(
                 response_mime_type="application/json",
             ),
         )
