@@ -35,12 +35,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include routers
-app.include_router(sessions.router)
+# Include routers with /api prefix to match Vercel routing
+app.include_router(sessions.router, prefix="/api")
 
-import sqlalchemy
-import asyncpg
-...
 @app.get("/api/health")
 def health_check():
     return {
