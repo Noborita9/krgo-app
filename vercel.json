@@ -1,6 +1,30 @@
 {
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "api/index.py" },
-    { "source": "/(.*)", "destination": "/index.html" }
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "frontend/dist" }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "api/index.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1",
+      "check": true
+    },
+    {
+      "src": "/(.*)",
+      "status": 200,
+      "dest": "/index.html"
+    }
   ]
 }
