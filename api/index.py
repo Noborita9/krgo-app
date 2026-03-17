@@ -10,11 +10,13 @@ from api.routers import sessions
 # Create database tables automatically for simplicity
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    async with engine.begin() as conn:
-        # Warning: create_all is good for dev, in production use Alembic migrations
-        await conn.run_sync(Base.metadata.create_all)
+    try:
+        async with engine.begin() as conn:
+            # This is helpful for the first run on Vercel
+            await conn.run_sync(Base.metadata.create_all)
+    except Exception as e:
+        print(f"Database initialization failed: {e}")
     yield
-    # Cleanup logic (if any) here
     await engine.dispose()
 
 app = FastAPI(
@@ -24,10 +26,10 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Set up CORS for the future Vue frontend
+# Set up CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, specify the actual frontend URL
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -35,10 +37,6 @@ app.add_middleware(
 
 # Include routers
 app.include_router(sessions.router)
-
-# Mount static files for payment confirmations
-os.makedirs("uploads/payments", exist_ok=True)
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 @app.get("/")
 def read_root():
