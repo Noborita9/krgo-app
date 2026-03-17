@@ -87,8 +87,13 @@ async def parse_receipt_image(file: UploadFile) -> list[dict[str, float]]:
             pass
 
     except Exception as e:
-        print(f"Error during receipt parsing: {e}")
-        pass
+        import traceback
+        error_detail = traceback.format_exc()
+        print(f"ERROR during receipt parsing: {str(e)}")
+        print(f"Full Traceback: {error_detail}")
+        # Return specific error items so user knows it failed
+        return [{"PARSING_ERROR": 0.0, "DETAIL": str(e)[:50]}]
     
     # Fallback
+    print("WARNING: Parsing reached the end without returning items.")
     return [{"Unknown Item 1": 10.00}, {"Unknown Item 2": 15.00}]
