@@ -80,11 +80,16 @@ async def upload_receipt(
             
     await db.commit()
     
-    # Refresh to get IDs
-    for item in created_items:
-        await db.refresh(item)
+    # Reload items with claims to satisfy the schema's expectation
+    stmt = (
+        select(ReceiptItem)
+        .options(selectinload(ReceiptItem.claims))
+        .where(ReceiptItem.id.in_([item.id for item in created_items]))
+    )
+    result = await db.execute(stmt)
+    refreshed_items = result.scalars().all()
         
-    return created_items
+    return refreshed_items
 
 @router.post("/{session_id}/items/{item_id}/claim", response_model=ClaimResponse)
 async def claim_item(
