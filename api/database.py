@@ -24,6 +24,10 @@ if db_url.startswith("postgres://"):
 elif db_url.startswith("postgresql://"):
     db_url = db_url.replace("postgresql://", "postgresql+asyncpg://", 1)
 
+# Strip query parameters if they exist (Supabase/Neon sometimes add them)
+if "?" in db_url:
+    db_url = db_url.split("?")[0]
+
 engine = create_async_engine(db_url, echo=True)
 async_session_maker = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
