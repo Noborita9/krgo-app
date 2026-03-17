@@ -38,9 +38,9 @@ app.add_middleware(
 # Include routers
 app.include_router(sessions.router)
 
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to the Receipt Splitter API! Visit /docs for the interactive API documentation."}
+@app.get("/api/health")
+def health_check():
+    return {"status": "ok", "message": "Receipt Splitter API is running!"}
 
 if __name__ == "__main__":
     import uvicorn
