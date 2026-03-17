@@ -26,9 +26,17 @@ async def create_session(session_data: SessionCreate, db: AsyncSession = Depends
     new_session = Session(bank_account_info=session_data.bank_account_info)
     db.add(new_session)
     await db.commit()
-    await db.refresh(new_session)
-    # The newly created session has empty items, returning it via schema is fine
-    return new_session
+    
+    # Reload session with items to satisfy the schema's expectation of an items list
+    stmt = (
+        select(Session)
+        .options(selectinload(Session.items))
+        .where(Session.id == new_session.id)
+    )
+    result = await db.execute(stmt)
+    refreshed_session = result.scalar_one()
+    
+    return refreshed_session
 
 @router.get("/{session_id}", response_model=SessionResponse)
 async def get_session(session_id: str, db: AsyncSession = Depends(get_db)):
