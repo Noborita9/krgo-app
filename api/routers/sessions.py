@@ -1,6 +1,6 @@
 import os
 import uuid
-from vercel_blob import put
+import vercel_blob
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -136,7 +136,7 @@ async def upload_payment_confirmation(
     
     try:
         # put() returns an object with a 'url' attribute
-        blob = put(blob_name, content)
+        blob = vercel_blob.put(blob_name, content)
         # We'll use the column 'payment_file_path' to store the URL
         claim.payment_file_path = blob.url
     except Exception as e:
