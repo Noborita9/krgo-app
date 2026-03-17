@@ -1,0 +1,17 @@
+[project]
+name = "krgo"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "asyncpg>=0.31.0",
+    "fastapi>=0.135.1",
+    "google-genai>=1.67.0",
+    "greenlet>=3.3.2",
+    "pydantic-settings>=2.13.1",
+    "python-multipart>=0.0.22",
+    "sqlalchemy>=2.0.48",
+    "uvicorn>=0.42.0",
+    "vercel-blob>=0.4.2",
+]
