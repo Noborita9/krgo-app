@@ -4,14 +4,15 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import declarative_base
 
+from pydantic import Field
+...
 class Settings(BaseSettings):
-    database_url: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/receipt_splitter"
-    gemini_api_key: str = ""
+    database_url: str = Field("postgresql+asyncpg://postgres:postgres@localhost:5432/receipt_splitter", validation_alias="KRGO_APP_DATABASE_URL")
+    gemini_api_key: str = Field("", validation_alias="GEMINI_API_KEY")
 
     model_config = SettingsConfigDict(
         env_file=".env", 
         env_file_encoding="utf-8",
-        env_prefix="KRGO_APP_",
         extra="ignore"
     )
 
